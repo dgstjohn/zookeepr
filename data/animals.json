@@ -117,6 +117,16 @@
         "hungry"
       ],
       "id": "11"
+    },
+    {
+      "name": "Jimi",
+      "species": "Lemur",
+      "diet": "omnivore",
+      "personalityTraits": [
+        "loving",
+        "goofy"
+      ],
+      "id": "12"
     }
   ]
 }

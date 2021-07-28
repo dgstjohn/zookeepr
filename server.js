@@ -10,6 +10,8 @@ app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
 
+app.use(express.static('public'));
+
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
     // note that we save the animalsArray as filteredResults here
@@ -59,7 +61,7 @@ function createNewAnimal(body, animalsArray) {
     animalsArray.push(animal);
     fs.writeFileSync(
         path.join(__dirname, './data/animals.json'),
-        JSON.stringify({ animals: animalsArray}, null, 2)
+        JSON.stringify({ animals: animalsArray }, null, 2)
     );
     // return finished code to post route for response
     return animal;
@@ -68,17 +70,17 @@ function createNewAnimal(body, animalsArray) {
 function validateAnimal(animal) {
     if (!animal.name || typeof animal.name !== 'string') {
         return false;
-      }
-      if (!animal.species || typeof animal.species !== 'string') {
+    }
+    if (!animal.species || typeof animal.species !== 'string') {
         return false;
-      }
-      if (!animal.diet || typeof animal.diet !== 'string') {
+    }
+    if (!animal.diet || typeof animal.diet !== 'string') {
         return false;
-      }
-      if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
+    }
+    if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
         return false;
-      }
-      return true;
+    }
+    return true;
 }
 
 app.get('/api/animals', (req, res) => {
@@ -103,12 +105,28 @@ app.post('/api/animals', (req, res) => {
     req.body.id = animals.length.toString(); // takes advantage of the length property, which is always 1 more than the last index
 
     // if any data in req.body is incorrect, send 400 error back
-  if (!validateAnimal(req.body)) {
-    res.status(400).send('The animal is not properly formatted.');
-  } else {
-    const animal = createNewAnimal(req.body, animals);
-    res.json(animal);
-  }
+    if (!validateAnimal(req.body)) {
+        res.status(400).send('The animal is not properly formatted.');
+    } else {
+        const animal = createNewAnimal(req.body, animals);
+        res.json(animal);
+    }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
